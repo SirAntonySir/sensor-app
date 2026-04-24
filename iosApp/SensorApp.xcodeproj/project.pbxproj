@@ -10,22 +10,44 @@
 		20827547F1EDDE9312EAD3E6 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799AE2976881B6ED4EA18C2A /* DashboardView.swift */; };
 		29CE65164B7E95DDA53DFB0C /* UnitDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB871A84E1BFCFBD8B350361 /* UnitDetailView.swift */; };
 		3BAAC53515D18D98E7354485 /* SensorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1B2CED448CEAF9E61BA893 /* SensorApp.swift */; };
+		48CB59F36D87BA945CBCB0D8 /* sailboat.riv in Resources */ = {isa = PBXBuildFile; fileRef = 2FF3D0831755E43023073A6B /* sailboat.riv */; };
+		68210EB5B819A0A9EA79F32A /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 6FFC865EEE0D1A43881F930D /* RiveRuntime */; };
+		7F38513B82251EF42BBE570C /* RiveExerciseAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A002BC26705B4B01F420AE /* RiveExerciseAnimation.swift */; };
 		A1BEB6AACC8FD2BB0D1A0819 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFF11A130C45D11FA2A56D7 /* ExerciseView.swift */; };
 		A3C5920B94CD2344A07978ED /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352EF64DC966630702214D0D /* ContentView.swift */; };
+		A60F02181E7971CFD767E806 /* tissue.riv in Resources */ = {isa = PBXBuildFile; fileRef = EE71EE494D7BCF223B78DF46 /* tissue.riv */; };
+		AB7CDDB55822C81E3DA0A388 /* dandelion.riv in Resources */ = {isa = PBXBuildFile; fileRef = A17A12562325A686A39ACC6B /* dandelion.riv */; };
 		C06B4846C880DD55DA40571B /* SensorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB56FE3D473271FCE4382F3 /* SensorViewModel.swift */; };
 		D82D0566233B29ADFDF42B2A /* ExerciseUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D6A017CB72780DFF8D0185 /* ExerciseUnit.swift */; };
+		F05A6A57049C0A8A6D2C7ED7 /* candle.riv in Resources */ = {isa = PBXBuildFile; fileRef = 9A8C3D0C57C8A4C76A2F620B /* candle.riv */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1A1B2CED448CEAF9E61BA893 /* SensorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorApp.swift; sourceTree = "<group>"; };
 		21D6A017CB72780DFF8D0185 /* ExerciseUnit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseUnit.swift; sourceTree = "<group>"; };
+		2FF3D0831755E43023073A6B /* sailboat.riv */ = {isa = PBXFileReference; path = sailboat.riv; sourceTree = "<group>"; };
 		340CC4FF96D179A3EFA0D110 /* SensorApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SensorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		352EF64DC966630702214D0D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		46A002BC26705B4B01F420AE /* RiveExerciseAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiveExerciseAnimation.swift; sourceTree = "<group>"; };
 		799AE2976881B6ED4EA18C2A /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		7DFF11A130C45D11FA2A56D7 /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseView.swift; sourceTree = "<group>"; };
+		9A8C3D0C57C8A4C76A2F620B /* candle.riv */ = {isa = PBXFileReference; path = candle.riv; sourceTree = "<group>"; };
+		A17A12562325A686A39ACC6B /* dandelion.riv */ = {isa = PBXFileReference; path = dandelion.riv; sourceTree = "<group>"; };
 		BAB56FE3D473271FCE4382F3 /* SensorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorViewModel.swift; sourceTree = "<group>"; };
 		BB871A84E1BFCFBD8B350361 /* UnitDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitDetailView.swift; sourceTree = "<group>"; };
+		EE71EE494D7BCF223B78DF46 /* tissue.riv */ = {isa = PBXFileReference; path = tissue.riv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0D5FFD50A9B568CE4BAF2D20 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68210EB5B819A0A9EA79F32A /* RiveRuntime in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		12BBC403392F405E3BDDF975 = {
@@ -58,6 +80,7 @@
 				352EF64DC966630702214D0D /* ContentView.swift */,
 				1A1B2CED448CEAF9E61BA893 /* SensorApp.swift */,
 				2A4C201DB2060A3A68DA5C7D /* Models */,
+				B72F417A6B438F91335DA972 /* RiveAssets */,
 				86D88B054FD592833C0B5F55 /* ViewModels */,
 				9160005F1B3468EC07FA4CC4 /* Views */,
 			);
@@ -77,9 +100,21 @@
 			children = (
 				799AE2976881B6ED4EA18C2A /* DashboardView.swift */,
 				7DFF11A130C45D11FA2A56D7 /* ExerciseView.swift */,
+				46A002BC26705B4B01F420AE /* RiveExerciseAnimation.swift */,
 				BB871A84E1BFCFBD8B350361 /* UnitDetailView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		B72F417A6B438F91335DA972 /* RiveAssets */ = {
+			isa = PBXGroup;
+			children = (
+				9A8C3D0C57C8A4C76A2F620B /* candle.riv */,
+				A17A12562325A686A39ACC6B /* dandelion.riv */,
+				2FF3D0831755E43023073A6B /* sailboat.riv */,
+				EE71EE494D7BCF223B78DF46 /* tissue.riv */,
+			);
+			path = RiveAssets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -91,6 +126,8 @@
 			buildPhases = (
 				00AD25AB75CD189D5381B702 /* Build KMP Shared Framework */,
 				9017196A028CC7C78838EFEB /* Sources */,
+				3AA91A3952AA9A83140D72C4 /* Resources */,
+				0D5FFD50A9B568CE4BAF2D20 /* Frameworks */,
 				A7801B1689C2BEE1901C5D18 /* Copy Compose Resources */,
 			);
 			buildRules = (
@@ -99,6 +136,7 @@
 			);
 			name = SensorApp;
 			packageProductDependencies = (
+				6FFC865EEE0D1A43881F930D /* RiveRuntime */,
 			);
 			productName = SensorApp;
 			productReference = 340CC4FF96D179A3EFA0D110 /* SensorApp.app */;
@@ -124,6 +162,9 @@
 			);
 			mainGroup = 12BBC403392F405E3BDDF975;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				70FE37777CEF763278A33A31 /* XCRemoteSwiftPackageReference "rive-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1B2942D327BA383FD580D884 /* Products */;
 			projectDirPath = "";
@@ -133,6 +174,20 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3AA91A3952AA9A83140D72C4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F05A6A57049C0A8A6D2C7ED7 /* candle.riv in Resources */,
+				AB7CDDB55822C81E3DA0A388 /* dandelion.riv in Resources */,
+				48CB59F36D87BA945CBCB0D8 /* sailboat.riv in Resources */,
+				A60F02181E7971CFD767E806 /* tissue.riv in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		00AD25AB75CD189D5381B702 /* Build KMP Shared Framework */ = {
@@ -184,6 +239,7 @@
 				20827547F1EDDE9312EAD3E6 /* DashboardView.swift in Sources */,
 				D82D0566233B29ADFDF42B2A /* ExerciseUnit.swift in Sources */,
 				A1BEB6AACC8FD2BB0D1A0819 /* ExerciseView.swift in Sources */,
+				7F38513B82251EF42BBE570C /* RiveExerciseAnimation.swift in Sources */,
 				3BAAC53515D18D98E7354485 /* SensorApp.swift in Sources */,
 				C06B4846C880DD55DA40571B /* SensorViewModel.swift in Sources */,
 				29CE65164B7E95DDA53DFB0C /* UnitDetailView.swift in Sources */,
@@ -388,6 +444,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		70FE37777CEF763278A33A31 /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6FFC865EEE0D1A43881F930D /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 70FE37777CEF763278A33A31 /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 790A6490FACAD80DFB259A1E /* Project object */;
 }

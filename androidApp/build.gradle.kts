@@ -26,13 +26,15 @@ kotlin {
             implementation(libs.activity.compose)
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.compose.material.icons)
+            implementation(libs.rive.android)
+            implementation(libs.startup.runtime)
         }
     }
 }
 
 android {
     namespace = "com.cloudhaus.sensorapp"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.cloudhaus.sensorapp"
         minSdk = 26

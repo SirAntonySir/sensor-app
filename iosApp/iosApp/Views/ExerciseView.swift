@@ -10,6 +10,9 @@ struct ExerciseView: View {
     @State private var phase: ExercisePhase = .instructions
     @State private var countdown = 3
     @State private var engine: (any ExerciseEngineWrapper)?
+    @State private var currentPressure: Float = 0
+    @State private var currentProgress: Float = 0
+    @State private var currentStage: Int = 0
 
     var body: some View {
         VStack(spacing: 24) {
@@ -76,19 +79,23 @@ struct ExerciseView: View {
     // MARK: - Active Exercise (with shared Compose animation)
     private var activeExerciseView: some View {
         VStack(spacing: 16) {
-            if let engine = engine {
-                // Shared Compose Multiplatform animation embedded via UIViewControllerRepresentable
-                ComposeAnimationView(engineState: engine.stateFlow)
-                    .frame(height: 320)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-            } else {
-                ProgressView()
-                    .frame(height: 320)
-            }
+            // Rive animation (falls back to icon if no .riv file)
+            RiveExerciseAnimation(
+                exerciseName: exerciseName,
+                pressure: currentPressure,
+                colorZone: 0,
+                progress: currentProgress,
+                stage: currentStage
+            )
+            .frame(height: 320)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
 
             // Native SwiftUI controls
             Button {
                 engine?.onVirtualBlow()
+                currentPressure = Float.random(in: 60...95)
+                currentProgress = min(currentProgress + 0.2, 1.0)
+                currentStage = min(currentStage + 1, 3)
             } label: {
                 Label("Blow", systemImage: "wind")
                     .font(.headline)

@@ -133,7 +133,7 @@ private fun ActiveContent(exerciseName: String, engineState: ExerciseState, onBl
         Text(exerciseName, style = MaterialTheme.typography.titleLarge)
 
         when (val active = engineState) {
-            is ExerciseState.Active -> ExerciseAnimationRouter(active.animationState, Modifier.weight(1f))
+            is ExerciseState.Active -> RiveExerciseAnimation(active.animationState, Modifier.weight(1f))
             else -> Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         }
 

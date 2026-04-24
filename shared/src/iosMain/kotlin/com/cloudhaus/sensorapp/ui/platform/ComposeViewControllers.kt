@@ -14,7 +14,9 @@ import platform.UIKit.UIViewController
 
 fun ExerciseAnimationViewController(
     engineStateFlow: StateFlow<ExerciseState>,
-): UIViewController = ComposeUIViewController {
+): UIViewController = ComposeUIViewController(
+    configure = { enforceStrictPlistSanityCheck = false }
+) {
     val engineState by engineStateFlow.collectAsState()
 
     MaterialTheme {

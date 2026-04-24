@@ -22,6 +22,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait"
+        INFOPLIST_KEY_CADisableMinimumFrameDurationOnPhone: YES
         FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../shared/build/bin/iosSimulatorArm64/debugFramework"
         OTHER_LDFLAGS: "-framework shared"
     preBuildScripts:
@@ -29,4 +30,14 @@ targets:
         script: |
           cd "$SRCROOT/.."
           ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+        basedOnDependencyAnalysis: false
+    postBuildScripts:
+      - name: Copy Compose Resources
+        script: |
+          RESOURCES_SRC="$SRCROOT/../shared/build/generated/compose/resourceGenerator/preparedResources/commonMain/composeResources"
+          RESOURCES_DST="$TARGET_BUILD_DIR/$PRODUCT_NAME.app/compose-resources/composeResources/com.cloudhaus.sensorapp.resources"
+          if [ -d "$RESOURCES_SRC" ]; then
+            mkdir -p "$RESOURCES_DST"
+            cp -R "$RESOURCES_SRC/"* "$RESOURCES_DST/"
+          fi
         basedOnDependencyAnalysis: false

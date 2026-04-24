@@ -22,3 +22,11 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait"
+        FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../shared/build/bin/iosSimulatorArm64/debugFramework"
+        OTHER_LDFLAGS: "-framework shared"
+    preBuildScripts:
+      - name: Build KMP Shared Framework
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+        basedOnDependencyAnalysis: false

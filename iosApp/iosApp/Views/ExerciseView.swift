@@ -1,4 +1,5 @@
 import SwiftUI
+import shared
 
 struct ExerciseView: View {
     let exerciseName: String
@@ -8,10 +9,7 @@ struct ExerciseView: View {
 
     @State private var phase: ExercisePhase = .instructions
     @State private var countdown = 3
-    @State private var pressureDisplay: Double = 0
-    @State private var timer: Timer?
-    @State private var breathCount = 0
-    @State private var result: ExerciseResultData?
+    @State private var engine: (any ExerciseEngineWrapper)?
 
     var body: some View {
         VStack(spacing: 24) {
@@ -35,22 +33,17 @@ struct ExerciseView: View {
     private var instructionsView: some View {
         VStack(spacing: 24) {
             Spacer()
-
             Image(systemName: exerciseIcon)
                 .font(.system(size: 80))
                 .foregroundStyle(.teal)
-
             Text("Get ready for \(exerciseName)")
                 .font(.title2.bold())
-
             Text(exerciseDescription)
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-
             Spacer()
-
             Button {
                 startCountdown()
             } label: {
@@ -80,41 +73,22 @@ struct ExerciseView: View {
         }
     }
 
-    // MARK: - Active Exercise
+    // MARK: - Active Exercise (with shared Compose animation)
     private var activeExerciseView: some View {
-        VStack(spacing: 32) {
-            Spacer()
-
-            // Pressure indicator
-            ZStack {
-                Circle()
-                    .stroke(Color.teal.opacity(0.2), lineWidth: 8)
-                    .frame(width: 200, height: 200)
-
-                Circle()
-                    .trim(from: 0, to: min(pressureDisplay / 100, 1.0))
-                    .stroke(Color.teal, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                    .frame(width: 200, height: 200)
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeInOut(duration: 0.3), value: pressureDisplay)
-
-                VStack {
-                    Text(String(format: "%.1f", pressureDisplay))
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
-                    Text("pressure")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+        VStack(spacing: 16) {
+            if let engine = engine {
+                // Shared Compose Multiplatform animation embedded via UIViewControllerRepresentable
+                ComposeAnimationView(engineState: engine.stateFlow)
+                    .frame(height: 320)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            } else {
+                ProgressView()
+                    .frame(height: 320)
             }
 
-            Text("Breaths: \(breathCount)")
-                .font(.title3)
-
-            Spacer()
-
-            // Virtual blow button (for simulator)
+            // Native SwiftUI controls
             Button {
-                simulateBlow()
+                engine?.onVirtualBlow()
             } label: {
                 Label("Blow", systemImage: "wind")
                     .font(.headline)
@@ -124,7 +98,6 @@ struct ExerciseView: View {
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-
             Button("Finish") {
                 finishExercise()
             }
@@ -137,28 +110,12 @@ struct ExerciseView: View {
     private var completeView: some View {
         VStack(spacing: 24) {
             Spacer()
-
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 80))
                 .foregroundStyle(.green)
-
             Text("Exercise Complete!")
                 .font(.title.bold())
-
-            if let result = result {
-                VStack(spacing: 8) {
-                    if let capacity = result.capacity {
-                        StatRow(label: "Capacity", value: String(format: "%.1f", capacity))
-                    }
-                    StatRow(label: "Breaths", value: "\(result.breathCount)")
-                }
-                .padding()
-                .background(Color(.secondarySystemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-
             Spacer()
-
             Button {
                 dismiss()
             } label: {
@@ -174,7 +131,6 @@ struct ExerciseView: View {
     }
 
     // MARK: - Helpers
-
     private var exerciseIcon: String {
         switch exerciseName {
         case "Candle": return "flame.fill"
@@ -201,69 +157,122 @@ struct ExerciseView: View {
     private func startCountdown() {
         phase = .countdown
         countdown = 3
+
+        // Create the shared engine
+        let wrapper = SharedExerciseEngine(exerciseName: exerciseName)
+        engine = wrapper
+
         Task {
             for _ in 1...3 {
                 try? await Task.sleep(for: .seconds(1))
                 countdown -= 1
             }
+            wrapper.start()
             phase = .active
-            startSensorReading()
-        }
-    }
-
-    private func startSensorReading() {
-        Task {
-            while phase == .active {
-                let time = Date().timeIntervalSince1970
-                pressureDisplay = 30 + 20 * sin(time * 2)
-                try? await Task.sleep(for: .milliseconds(100))
-            }
-        }
-    }
-
-    private func simulateBlow() {
-        breathCount += 1
-        withAnimation(.easeOut(duration: 0.3)) {
-            pressureDisplay = Double.random(in: 60...95)
         }
     }
 
     private func finishExercise() {
-        timer?.invalidate()
-        timer = nil
-
-        let resultData = ExerciseResultData(
-            exerciseName: exerciseName,
-            capacity: pressureDisplay,
-            breathCount: breathCount
-        )
-        result = resultData
+        engine?.stop()
         viewModel.recordCompletion(exercise: exerciseName, unitId: unitId)
         phase = .complete
     }
 }
 
-struct StatRow: View {
-    let label: String
-    let value: String
+// MARK: - Compose Animation Bridge
 
-    var body: some View {
-        HStack {
-            Text(label)
-                .foregroundStyle(.secondary)
-            Spacer()
-            Text(value)
-                .font(.headline)
+struct ComposeAnimationView: UIViewControllerRepresentable {
+    let engineState: any AnyObject // Kotlinx StateFlow
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        ComposeViewControllersKt.ExerciseAnimationViewController(
+            engineStateFlow: engineState as! Kotlinx_coroutines_coreStateFlow
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+// MARK: - Engine Wrapper
+
+protocol ExerciseEngineWrapper {
+    var stateFlow: any AnyObject { get }
+    func start()
+    func stop()
+    func onVirtualBlow()
+}
+
+class SharedExerciseEngine: ExerciseEngineWrapper {
+    private let engine: ExerciseEngine
+    private let mockSensor: MockSensorSource
+    private let breathDetector: BreathDetector
+
+    var stateFlow: any AnyObject { engine.state }
+
+    init(exerciseName: String) {
+        mockSensor = MockSensorSource(baselinePressure: 1013.25, amplitude: 0.3, breathCycleMs: 4000)
+        mockSensor.start()
+        breathDetector = BreathDetector(sensorSource: mockSensor)
+
+        let exerciseType = SharedExerciseEngine.typeFromName(exerciseName)
+        let config = SharedExerciseEngine.configFromName(exerciseName)
+
+        let scope = IosHelpersKt.createMainScope()
+        engine = ExerciseEngineFactory.shared.create(
+            type: exerciseType,
+            breathDetector: breathDetector,
+            config: config,
+            difficulty: 0,
+            scope: scope
+        )
+    }
+
+    func start() { engine.start(calibration: nil) }
+    func stop() { engine.stop(); mockSensor.stop() }
+    func onVirtualBlow() { engine.onVirtualBlow() }
+
+    private static func typeFromName(_ name: String) -> ExerciseType {
+        switch name {
+        case "Candle": return .candle
+        case "Windmill": return .windmill
+        case "Tissue": return .tissue
+        case "Dandelion": return .dandelion
+        case "Boat": return .boat
+        case "Straw": return .straw
+        case "MIE": return .countingbreaths
+        default: return .timedbreaths
         }
     }
+
+    private static func configFromName(_ name: String) -> StepConfig {
+        if name.contains("-") {
+            let parts = name.split(separator: "-").compactMap { Int32($0) }
+            return StepConfig(
+                breathType: nil,
+                breathCount: 5,
+                inhaleDuration: parts.count > 0 ? KotlinInt(int: parts[0]) : 4,
+                exhaleDuration: parts.count > 2 ? KotlinInt(int: parts[2]) : 4,
+                holdDuration: parts.count > 1 ? KotlinInt(int: parts[1]) : 0
+            )
+        }
+        return StepConfig(breathType: nil, breathCount: 5, inhaleDuration: nil, exhaleDuration: nil, holdDuration: nil)
+    }
 }
+
+// MARK: - Supporting Types
 
 enum ExercisePhase {
     case instructions, countdown, active, complete
 }
 
-struct ExerciseResultData {
-    let exerciseName: String
-    let capacity: Double?
-    let breathCount: Int
+struct StatRow: View {
+    let label: String
+    let value: String
+    var body: some View {
+        HStack {
+            Text(label).foregroundStyle(.secondary)
+            Spacer()
+            Text(value).font(.headline)
+        }
+    }
 }

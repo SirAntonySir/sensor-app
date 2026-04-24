@@ -22,6 +22,10 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.runtime)
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.navigation.compose)
+            implementation(libs.activity.compose)
+            implementation(libs.lifecycle.viewmodel.compose)
+            implementation(libs.compose.material.icons)
         }
     }
 }

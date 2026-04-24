@@ -1,5 +1,6 @@
 package com.cloudhaus.sensorapp.model
 
+import com.cloudhaus.sensorapp.util.currentTimeMillis
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -65,5 +66,5 @@ data class ExerciseResult(
     val exhale: Double? = null,
     val capacity: Double? = null,
     val duration: Double? = null,
-    val recordedAt: Long = System.currentTimeMillis(),
+    val recordedAt: Long = currentTimeMillis(),
 )

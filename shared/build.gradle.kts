@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -30,6 +32,11 @@ kotlin {
             implementation(libs.supabase.auth)
             implementation(libs.ktor.client.core)
             implementation(libs.koin.core)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

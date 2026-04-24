@@ -3,6 +3,9 @@ package com.cloudhaus.sensorapp.sensor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import com.cloudhaus.sensorapp.util.currentTimeMillis
+import kotlin.math.PI
+import kotlin.math.sin
 
 /**
  * Mock sensor source for testing and emulator development.
@@ -17,12 +20,12 @@ class MockSensorSource(
     private var running = false
 
     override val pressureFlow: Flow<PressureReading> = flow {
-        val startTime = System.currentTimeMillis()
+        val startTime = currentTimeMillis()
         while (running) {
-            val elapsed = System.currentTimeMillis() - startTime
+            val elapsed = currentTimeMillis() - startTime
             val phase = (elapsed % breathCycleMs).toDouble() / breathCycleMs
-            val pressure = baselinePressure + amplitude * kotlin.math.sin(2 * Math.PI * phase)
-            emit(PressureReading(pressure, System.currentTimeMillis()))
+            val pressure = baselinePressure + amplitude * sin(2 * PI * phase)
+            emit(PressureReading(pressure, currentTimeMillis()))
             delay(BarometerThresholds.READING_INTERVAL_MS)
         }
     }

@@ -52,6 +52,12 @@ kotlin {
     }
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.cloudhaus.sensorapp.resources"
+    generateResClass = always
+}
+
 android {
     namespace = "com.cloudhaus.sensorapp.shared"
     compileSdk = 35

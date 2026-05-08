@@ -78,7 +78,23 @@ class WindmillEngine(
 
     override fun stop() { job?.cancel() }
 
+    override fun onVirtualIntensity(intensity: Float) {
+        // Cancel the breath-detector loop so it stops overwriting `pressure`
+        // between slider events; the slider becomes the sole writer to _state.
+        job?.cancel(); job = null
+        val clamped = intensity.coerceIn(0f, 100f)
+        val (zone, speed) = when {
+            clamped >= 70f -> ColorZone.Green to RotationSpeed.Fast
+            clamped >= 35f -> ColorZone.Orange to RotationSpeed.Medium
+            else -> ColorZone.Red to RotationSpeed.Slow
+        }
+        _state.value = ExerciseState.Active(
+            AnimationState.Windmill(speed, zone, clamped)
+        )
+    }
+
     override fun onVirtualBlow() {
+        job?.cancel(); job = null
         _state.value = ExerciseState.Active(
             AnimationState.Windmill(RotationSpeed.Fast, ColorZone.Green, 50f)
         )

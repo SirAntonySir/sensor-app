@@ -26,10 +26,8 @@ struct ExerciseRow: View {
         switch name {
         case "Candle": return "flame.fill"
         case "Windmill": return "wind"
-        case "Tissue": return "doc.fill"
         case "Dandelion": return "leaf.fill"
-        case "Boat": return "sailboat.fill"
-        case "Straw": return "straw.fill"
+        case "FloatBall": return "circle.fill"
         case "MIE": return "lungs.fill"
         default: return "timer"
         }

@@ -75,7 +75,28 @@ class CandleEngine(
 
     override fun stop() { job?.cancel() }
 
+    override fun onVirtualIntensity(intensity: Float) {
+        // Cancel the breath-detector loop so it stops overwriting `pressure`
+        // back to 0 between slider events; from here the slider is the sole
+        // writer to _state.
+        job?.cancel(); job = null
+        // The Candle composable runs its own flame-erosion sim driven by
+        // breath, so the engine only has to publish the slider value as
+        // pressure. The composable handles guttering, snuffing, and relight
+        // via its `gutterStart` / `snuffStart` / `relightDelay` config.
+        val clamped = intensity.coerceIn(0f, 100f)
+        _state.value = ExerciseState.Active(
+            AnimationState.Candle(
+                isBlownOut = false,
+                flameScale = 1f,
+                colorZone = ColorZone.Green,
+                pressure = clamped,
+            )
+        )
+    }
+
     override fun onVirtualBlow() {
+        job?.cancel(); job = null
         flameSize = (flameSize - 0.15f).coerceAtLeast(0f)
         val isBlownOut = flameSize <= 0.1f
         _state.value = ExerciseState.Active(

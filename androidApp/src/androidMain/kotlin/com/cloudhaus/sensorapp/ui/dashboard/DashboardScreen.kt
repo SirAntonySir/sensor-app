@@ -51,7 +51,7 @@ fun DashboardScreen(
                     medal = unit.medal,
                     isUnlocked = unit.isUnlocked,
                     unitNumber = unit.id,
-                    onClick = { if (unit.isUnlocked) onUnitClick(unit.id) },
+                    onClick = { onUnitClick(unit.id) },
                     showLine = index < units.size - 1,
                 )
             }
@@ -143,7 +143,7 @@ private fun UnitCard(
             modifier = Modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(12.dp))
-                .clickable(enabled = isUnlocked, onClick = onClick),
+                .clickable(onClick = onClick),
         ) {
             Row(
                 modifier = Modifier

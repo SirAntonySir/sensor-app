@@ -16,10 +16,8 @@ object ExerciseEngineFactory {
     ): ExerciseEngine = when (type) {
         ExerciseType.Candle -> CandleEngine(breathDetector, difficulty, scope)
         ExerciseType.Windmill -> WindmillEngine(breathDetector, difficulty, scope)
-        ExerciseType.Tissue -> TissueEngine(breathDetector, difficulty, scope)
         ExerciseType.Dandelion -> DandelionEngine(breathDetector, difficulty, scope)
-        ExerciseType.Boat -> SailboatEngine(breathDetector, difficulty, scope)
-        ExerciseType.Straw -> StrawEngine(scope)
+        ExerciseType.FloatBall -> FloatBallEngine(breathDetector, difficulty, scope)
         ExerciseType.CountingBreaths -> CountingBreathsEngine(
             breathDetector, config.breathCount ?: 5, scope
         )

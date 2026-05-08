@@ -80,28 +80,45 @@ class DandelionEngine(
 
     override fun stop() { job?.cancel() }
 
+    override fun onVirtualIntensity(intensity: Float) {
+        // Cancel the breath-detector loop so it stops overwriting `pressure`
+        // between slider events; the slider becomes the sole writer to _state.
+        job?.cancel(); job = null
+        val clamped = intensity.coerceIn(0f, 100f)
+        val stage = when {
+            clamped < 30f -> DandelionStage.Still
+            clamped < 70f -> DandelionStage.Blow
+            clamped < 95f -> DandelionStage.Partial
+            else -> DandelionStage.FullBlown
+        }
+        _state.value = ExerciseState.Active(
+            AnimationState.Dandelion(stage = stage, pressure = clamped)
+        )
+    }
+
     override fun onVirtualBlow() {
+        job?.cancel(); job = null
         if (!firstBlowDone) {
-            firstBlowCapacity = 40.0
+            firstBlowCapacity = 85.0
             firstBlowDone = true
             _state.value = ExerciseState.Active(
-                AnimationState.Dandelion(DandelionStage.Blow, 40f)
+                AnimationState.Dandelion(DandelionStage.Blow, 85f)
             )
             scope.launch {
                 delay(750)
                 _state.value = ExerciseState.Active(
-                    AnimationState.Dandelion(DandelionStage.Partial, 40f)
+                    AnimationState.Dandelion(DandelionStage.Partial, 85f)
                 )
             }
         } else {
-            secondBlowCapacity = 45.0
+            secondBlowCapacity = 95.0
             _state.value = ExerciseState.Active(
-                AnimationState.Dandelion(DandelionStage.FullBlown, 45f)
+                AnimationState.Dandelion(DandelionStage.FullBlown, 95f)
             )
             scope.launch {
                 delay(1500)
                 _state.value = ExerciseState.Complete(
-                    ExerciseResultData(success = true, capacity = 85.0)
+                    ExerciseResultData(success = true, capacity = 180.0)
                 )
             }
         }

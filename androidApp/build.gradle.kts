@@ -26,8 +26,6 @@ kotlin {
             implementation(libs.activity.compose)
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.compose.material.icons)
-            implementation(libs.rive.android)
-            implementation(libs.startup.runtime)
         }
     }
 }

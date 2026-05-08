@@ -104,9 +104,8 @@ private fun ExerciseRow(
 private fun exerciseIcon(name: String): ImageVector = when (name) {
     "Candle" -> Icons.Default.LocalFireDepartment
     "Windmill" -> Icons.Default.Air
-    "Tissue" -> Icons.Default.Description
     "Dandelion" -> Icons.Default.Spa
-    "Boat" -> Icons.Default.Sailing
+    "FloatBall" -> Icons.Default.Speed
     "MIE" -> Icons.Default.MonitorHeart
     else -> Icons.Default.Timer
 }

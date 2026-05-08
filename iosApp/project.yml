@@ -4,18 +4,12 @@ options:
   deploymentTarget:
     iOS: "17.0"
   xcodeVersion: "26.2"
-packages:
-  RiveRuntime:
-    url: https://github.com/rive-app/rive-ios
-    from: "6.0.0"
 targets:
   SensorApp:
     type: application
     platform: iOS
     sources:
       - iosApp
-    dependencies:
-      - package: RiveRuntime
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.cloudhaus.sensorapp

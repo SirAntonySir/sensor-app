@@ -29,4 +29,12 @@ interface ExerciseEngine {
     fun start(calibration: CalibrationData? = null)
     fun stop()
     fun onVirtualBlow()
+
+    /**
+     * Continuous virtual-input variant of [onVirtualBlow]: the UI reports a
+     * normalized intensity (0..100) every time it changes. Engines that don't
+     * model continuous input ignore it; [DandelionEngine] maps it to pressure
+     * + stage so a slider can drive the animation directly.
+     */
+    fun onVirtualIntensity(intensity: Float) {}
 }

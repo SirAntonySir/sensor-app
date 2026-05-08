@@ -10,24 +10,32 @@ struct ExerciseView: View {
     @State private var phase: ExercisePhase = .instructions
     @State private var countdown = 3
     @State private var engine: (any ExerciseEngineWrapper)?
-    @State private var currentPressure: Float = 0
-    @State private var currentProgress: Float = 0
-    @State private var currentStage: Int = 0
+    @State private var intensity: Double = 0
 
     var body: some View {
-        VStack(spacing: 24) {
-            switch phase {
-            case .instructions:
-                instructionsView
-            case .countdown:
-                countdownView
-            case .active:
-                activeExerciseView
-            case .complete:
-                completeView
+        ZStack {
+            // Persistent animation layer — same call site across .active and
+            // .complete so the underlying Compose VC is reused and seed/frame
+            // state survives the phase change.
+            if (phase == .active || phase == .complete), let engine {
+                ComposeAnimationView(engineState: engine.stateFlow)
+                    .ignoresSafeArea()
             }
+
+            VStack(spacing: 24) {
+                switch phase {
+                case .instructions:
+                    instructionsView
+                case .countdown:
+                    countdownView
+                case .active:
+                    activeOverlay
+                case .complete:
+                    completeOverlay
+                }
+            }
+            .padding()
         }
-        .padding()
         .navigationTitle(exerciseName)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -76,52 +84,56 @@ struct ExerciseView: View {
         }
     }
 
-    // MARK: - Active Exercise (with shared Compose animation)
-    private var activeExerciseView: some View {
-        VStack(spacing: 16) {
-            // Rive animation (falls back to icon if no .riv file)
-            RiveExerciseAnimation(
-                exerciseName: exerciseName,
-                pressure: currentPressure,
-                colorZone: 0,
-                progress: currentProgress,
-                stage: currentStage
-            )
-            .frame(height: 320)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-
-            // Native SwiftUI controls
-            Button {
-                engine?.onVirtualBlow()
-                currentPressure = Float.random(in: 60...95)
-                currentProgress = min(currentProgress + 0.2, 1.0)
-                currentStage = min(currentStage + 1, 3)
-            } label: {
-                Label("Blow", systemImage: "wind")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.teal)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+    // MARK: - Active overlay (controls only — the animation lives in the
+    // ZStack above so it can persist across phases).
+    private var activeOverlay: some View {
+        VStack(spacing: 12) {
+            Spacer()
+            if exerciseName == "Dandelion" || exerciseName == "Candle" || exerciseName == "Windmill" || exerciseName == "FloatBall" {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Intensity: \(Int(intensity))")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Slider(
+                        value: Binding(
+                            get: { intensity },
+                            set: { newValue in
+                                intensity = newValue
+                                engine?.onVirtualIntensity(Float(newValue))
+                            }
+                        ),
+                        in: 0...100
+                    )
+                }
+            } else {
+                Button {
+                    engine?.onVirtualBlow()
+                } label: {
+                    Label("Blow", systemImage: "wind")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.teal)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
             }
-            Button("Finish") {
-                finishExercise()
-            }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
         }
     }
 
-    // MARK: - Complete
-    private var completeView: some View {
+    // MARK: - Complete overlay (result card on top of persistent animation).
+    private var completeOverlay: some View {
         VStack(spacing: 24) {
             Spacer()
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(.green)
-            Text("Exercise Complete!")
-                .font(.title.bold())
+            VStack(spacing: 12) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.green)
+                Text("Exercise Complete!")
+                    .font(.title2.bold())
+            }
+            .padding(24)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
             Spacer()
             Button {
                 dismiss()
@@ -142,9 +154,8 @@ struct ExerciseView: View {
         switch exerciseName {
         case "Candle": return "flame.fill"
         case "Windmill": return "wind"
-        case "Tissue": return "doc.fill"
         case "Dandelion": return "leaf.fill"
-        case "Boat": return "sailboat.fill"
+        case "FloatBall": return "circle.fill"
         default: return "lungs.fill"
         }
     }
@@ -153,9 +164,8 @@ struct ExerciseView: View {
         switch exerciseName {
         case "Candle": return "Blow steadily to extinguish the candle flame."
         case "Windmill": return "Blow to spin the windmill blades as fast as you can."
-        case "Tissue": return "Blow the tissue as far as possible."
         case "Dandelion": return "Blow the dandelion seeds away with a sustained breath."
-        case "Boat": return "Blow to propel the boat across the water."
+        case "FloatBall": return "Sustain a steady breath to keep the ball floating at the top."
         case "MIE": return "Breathe in and out as deeply as you can."
         default: return "Follow the breathing pattern shown on screen."
         }
@@ -207,6 +217,7 @@ protocol ExerciseEngineWrapper {
     func start()
     func stop()
     func onVirtualBlow()
+    func onVirtualIntensity(_ intensity: Float)
 }
 
 class SharedExerciseEngine: ExerciseEngineWrapper {
@@ -237,15 +248,14 @@ class SharedExerciseEngine: ExerciseEngineWrapper {
     func start() { engine.start(calibration: nil) }
     func stop() { engine.stop(); mockSensor.stop() }
     func onVirtualBlow() { engine.onVirtualBlow() }
+    func onVirtualIntensity(_ intensity: Float) { engine.onVirtualIntensity(intensity: intensity) }
 
     private static func typeFromName(_ name: String) -> ExerciseType {
         switch name {
         case "Candle": return .candle
         case "Windmill": return .windmill
-        case "Tissue": return .tissue
         case "Dandelion": return .dandelion
-        case "Boat": return .boat
-        case "Straw": return .straw
+        case "FloatBall": return .floatball
         case "MIE": return .countingbreaths
         default: return .timedbreaths
         }

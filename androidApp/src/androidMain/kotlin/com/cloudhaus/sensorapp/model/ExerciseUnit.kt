@@ -17,14 +17,14 @@ data class ExerciseUnit(
 
     companion object {
         val allUnits = listOf(
-            ExerciseUnit(1, "Unit 1", listOf("MIE", "4-0-4", "Tissue"), isUnlocked = true),
+            ExerciseUnit(1, "Unit 1", listOf("MIE", "4-0-4", "FloatBall"), isUnlocked = true),
             ExerciseUnit(2, "Unit 2", listOf("4-1-5", "Candle", "Windmill")),
             ExerciseUnit(3, "Unit 3", listOf("4-2-5", "Windmill", "Dandelion")),
-            ExerciseUnit(4, "Unit 4", listOf("4-2-5", "Boat", "Candle")),
-            ExerciseUnit(5, "Unit 5", listOf("4-7-11", "Tissue", "Windmill")),
+            ExerciseUnit(4, "Unit 4", listOf("4-2-5", "Candle")),
+            ExerciseUnit(5, "Unit 5", listOf("4-7-11", "Windmill")),
             ExerciseUnit(6, "Unit 6", listOf("4-3-5", "Windmill", "Candle")),
             ExerciseUnit(7, "Unit 7", listOf("4-3-5", "Windmill", "Candle")),
-            ExerciseUnit(8, "Unit 8", listOf("4-7-11", "Boat", "Candle")),
+            ExerciseUnit(8, "Unit 8", listOf("4-7-11", "Candle")),
             ExerciseUnit(9, "Unit 9", listOf("4-7-11", "Windmill", "Dandelion")),
         )
     }

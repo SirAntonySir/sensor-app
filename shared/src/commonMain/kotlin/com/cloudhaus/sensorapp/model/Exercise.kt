@@ -21,12 +21,10 @@ data class LocalizedText(
 enum class ExerciseType {
     CountingBreaths,
     TimedBreaths,
-    Tissue,
     Candle,
     Windmill,
     Dandelion,
-    Boat,
-    Straw,
+    FloatBall,
 }
 
 @Serializable

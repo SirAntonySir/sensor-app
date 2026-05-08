@@ -7,7 +7,6 @@ enum class RotationSpeed(val durationMs: Int) {
     Slow(2500), Medium(1000), Fast(300)
 }
 enum class DandelionStage { Still, Blow, Partial, FullBlown }
-enum class StrawFrame { Idle, Shoot1, Shoot2, Suck1, Suck2, Suck3 }
 
 sealed class AnimationState {
 
@@ -24,24 +23,15 @@ sealed class AnimationState {
         val pressure: Float = 0f,
     ) : AnimationState()
 
-    data class Tissue(
-        val colorZone: ColorZone = ColorZone.Red,
-        val pressure: Float = 0f,
-    ) : AnimationState()
-
     data class Dandelion(
         val stage: DandelionStage = DandelionStage.Still,
         val pressure: Float = 0f,
     ) : AnimationState()
 
-    data class Sailboat(
-        val progress: Float = 0f,
-        val blowCount: Int = 0,
-        val targetCount: Int = 5,
-    ) : AnimationState()
-
-    data class Straw(
-        val frame: StrawFrame = StrawFrame.Idle,
+    data class FloatBall(
+        val pressure: Float = 0f,
+        /** Increment to fire a one-shot lift burst on the rig. */
+        val burstId: Int = 0,
     ) : AnimationState()
 
     data class CountingBreaths(

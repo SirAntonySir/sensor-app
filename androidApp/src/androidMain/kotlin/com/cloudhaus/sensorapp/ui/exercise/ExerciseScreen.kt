@@ -14,11 +14,13 @@ import androidx.compose.ui.unit.sp
 import com.cloudhaus.sensorapp.engine.*
 import com.cloudhaus.sensorapp.model.ExerciseType
 import com.cloudhaus.sensorapp.model.StepConfig
+import com.cloudhaus.sensorapp.BuildConfig
 import com.cloudhaus.sensorapp.pipeline.BreathDetector
-import com.cloudhaus.sensorapp.sensor.MockSensorSource
+import com.cloudhaus.sensorapp.sensor.SensorSourceProvider
 import com.cloudhaus.sensorapp.ui.animation.ExerciseAnimationRouter
 import com.cloudhaus.sensorapp.viewmodel.SensorViewModel
 import kotlinx.coroutines.delay
+import org.koin.compose.koinInject
 
 private enum class ScreenPhase { Instructions, Countdown, Active, Complete }
 
@@ -29,11 +31,36 @@ fun ExerciseScreen(
     viewModel: SensorViewModel,
     onFinish: () -> Unit,
 ) {
+    val provider = koinInject<SensorSourceProvider>()
+    var forceMock by remember { mutableStateOf(false) }
+
+    // No real barometer and not forced to mock: don't fake an exercise.
+    if (!provider.barometerAvailable && !forceMock) {
+        BarometerUnavailableContent(
+            allowMock = BuildConfig.DEBUG,
+            onUseMock = { forceMock = true },
+            onBack = onFinish,
+        )
+        return
+    }
+
+    ExerciseRunner(exerciseName, unitId, viewModel, provider, forceMock, onFinish)
+}
+
+@Composable
+private fun ExerciseRunner(
+    exerciseName: String,
+    unitId: Int,
+    viewModel: SensorViewModel,
+    provider: SensorSourceProvider,
+    forceMock: Boolean,
+    onFinish: () -> Unit,
+) {
     val exerciseType = exerciseTypeFromName(exerciseName)
     val scope = rememberCoroutineScope()
 
-    val mockSensor = remember { MockSensorSource().also { it.start() } }
-    val breathDetector = remember { BreathDetector(mockSensor) }
+    val sensor = remember { provider.create(forceMock).also { it.start() } }
+    val breathDetector = remember { BreathDetector(sensor) }
 
     val engine = remember {
         ExerciseEngineFactory.create(
@@ -70,7 +97,7 @@ fun ExerciseScreen(
     DisposableEffect(Unit) {
         onDispose {
             engine.stop()
-            mockSensor.stop()
+            sensor.stop()
         }
     }
 
@@ -105,6 +132,42 @@ fun ExerciseScreen(
                     result = (engineState as? ExerciseState.Complete)?.result,
                     onDone = onFinish,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BarometerUnavailableContent(
+    allowMock: Boolean,
+    onUseMock: () -> Unit,
+    onBack: () -> Unit,
+) {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Icon(Icons.Default.SensorsOff, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(72.dp))
+            Spacer(Modifier.height(24.dp))
+            Text("Barometer unavailable", style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(12.dp))
+            Text(
+                "This device has no pressure sensor, so breathing exercises can't be driven by the barometer.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(48.dp))
+            if (allowMock) {
+                Button(onClick = onUseMock, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
+                    Text("Continue with simulated sensor", Modifier.padding(vertical = 8.dp))
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+            OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
+                Text("Back", Modifier.padding(vertical = 8.dp))
             }
         }
     }

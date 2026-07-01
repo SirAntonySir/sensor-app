@@ -26,6 +26,8 @@ kotlin {
             implementation(libs.activity.compose)
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.compose.material.icons)
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
     }
 }
@@ -46,5 +48,6 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }

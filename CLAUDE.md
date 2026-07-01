@@ -46,7 +46,7 @@ Active source roots:
 
 This is the central abstraction; touching engines means understanding all of it.
 
-`SensorSource` (`shared/.../sensor/SensorSource.kt`) emits `PressureReading(pressure: Double /* hPa */, timestampMs: Long)` at ~50 Hz. `MockSensorSource` is the only common implementation — real platform sensors are still TODO.
+`SensorSource` (`shared/.../sensor/SensorSource.kt`) emits `PressureReading(pressure: Double /* hPa */, timestampMs: Long)` at ~50 Hz. `MockSensorSource` (commonMain) emits a sine wave for emulator/dev use. Real hardware sources are wired per platform: `AndroidBarometerSource` (androidMain, `SensorManager`/`Sensor.TYPE_PRESSURE`) and `IosBarometerSource` (iosMain, CoreMotion `CMAltimeter`, converting kPa→hPa). `SensorSourceProvider` / `BaseSensorSourceProvider` picks real-vs-mock: Android resolves it via Koin (`SensorApp` + `androidSensorModule`); iOS constructs `IosSensorSourceProvider()` directly in Swift. When a device has no barometer, `ExerciseScreen`/`ExerciseView` show a "barometer unavailable" state, with a DEBUG-only "simulated sensor" fallback so emulators/Simulator still work. iOS needs `NSMotionUsageDescription` (set in `project.yml`).
 
 `BreathDetector` (`shared/.../pipeline/BreathDetector.kt`) consumes pressure readings and produces breath events used by engines.
 

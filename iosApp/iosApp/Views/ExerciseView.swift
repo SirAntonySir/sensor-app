@@ -11,8 +11,25 @@ struct ExerciseView: View {
     @State private var countdown = 3
     @State private var engine: (any ExerciseEngineWrapper)?
     @State private var intensity: Double = 0
+    @State private var forceMock = false
+
+    private var barometerAvailable: Bool {
+        IosSensorSourceProvider().barometerAvailable
+    }
 
     var body: some View {
+        Group {
+            if !barometerAvailable && !forceMock {
+                barometerUnavailableView
+            } else {
+                exerciseContent
+            }
+        }
+        .navigationTitle(exerciseName)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var exerciseContent: some View {
         ZStack {
             // Persistent animation layer — same call site across .active and
             // .complete so the underlying Compose VC is reused and seed/frame
@@ -36,8 +53,47 @@ struct ExerciseView: View {
             }
             .padding()
         }
-        .navigationTitle(exerciseName)
-        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Barometer unavailable
+    private var barometerUnavailableView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            Image(systemName: "sensor.tag.radiowaves.forward.slash")
+                .font(.system(size: 72))
+                .foregroundStyle(.red)
+            Text("Barometer unavailable")
+                .font(.title2.bold())
+            Text("This device has no pressure sensor, so breathing exercises can't be driven by the barometer.")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+            Spacer()
+            #if DEBUG
+            Button {
+                forceMock = true
+            } label: {
+                Text("Continue with simulated sensor")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.teal)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            #endif
+            Button {
+                dismiss()
+            } label: {
+                Text("Back")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.teal))
+            }
+        }
+        .padding()
     }
 
     // MARK: - Instructions
@@ -176,7 +232,7 @@ struct ExerciseView: View {
         countdown = 3
 
         // Create the shared engine
-        let wrapper = SharedExerciseEngine(exerciseName: exerciseName)
+        let wrapper = SharedExerciseEngine(exerciseName: exerciseName, forceMock: forceMock)
         engine = wrapper
 
         Task {
@@ -222,15 +278,15 @@ protocol ExerciseEngineWrapper {
 
 class SharedExerciseEngine: ExerciseEngineWrapper {
     private let engine: ExerciseEngine
-    private let mockSensor: MockSensorSource
+    private let sensor: SensorSource
     private let breathDetector: BreathDetector
 
     var stateFlow: any AnyObject { engine.state }
 
-    init(exerciseName: String) {
-        mockSensor = MockSensorSource(baselinePressure: 1013.25, amplitude: 0.3, breathCycleMs: 4000)
-        mockSensor.start()
-        breathDetector = BreathDetector(sensorSource: mockSensor)
+    init(exerciseName: String, forceMock: Bool) {
+        sensor = IosSensorSourceProvider().create(forceMock: forceMock)
+        sensor.start()
+        breathDetector = BreathDetector(sensorSource: sensor)
 
         let exerciseType = SharedExerciseEngine.typeFromName(exerciseName)
         let config = SharedExerciseEngine.configFromName(exerciseName)
@@ -246,7 +302,7 @@ class SharedExerciseEngine: ExerciseEngineWrapper {
     }
 
     func start() { engine.start(calibration: nil) }
-    func stop() { engine.stop(); mockSensor.stop() }
+    func stop() { engine.stop(); sensor.stop() }
     func onVirtualBlow() { engine.onVirtualBlow() }
     func onVirtualIntensity(_ intensity: Float) { engine.onVirtualIntensity(intensity: intensity) }
 

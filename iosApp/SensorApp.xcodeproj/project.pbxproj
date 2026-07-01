@@ -225,6 +225,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/bin/iosSimulatorArm64/debugFramework";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CADisableMinimumFrameDurationOnPhone = YES;
+				INFOPLIST_KEY_NSMotionUsageDescription = "Reads barometric pressure to drive the breathing exercises.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -252,6 +253,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/bin/iosSimulatorArm64/debugFramework";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CADisableMinimumFrameDurationOnPhone = YES;
+				INFOPLIST_KEY_NSMotionUsageDescription = "Reads barometric pressure to drive the breathing exercises.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

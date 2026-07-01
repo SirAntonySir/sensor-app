@@ -13,6 +13,15 @@ struct DashboardView: View {
         }
         .navigationTitle("Sensor App")
         .background(Color(.systemGroupedBackground))
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    SettingsView()
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+            }
+        }
     }
 
     private var headerSection: some View {

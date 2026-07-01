@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,12 +27,20 @@ import com.cloudhaus.sensorapp.viewmodel.SensorViewModel
 fun DashboardScreen(
     viewModel: SensorViewModel,
     onUnitClick: (Int) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     val units by viewModel.units.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Sensor App") })
+            TopAppBar(
+                title = { Text("Sensor App") },
+                actions = {
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    }
+                },
+            )
         },
     ) { padding ->
         LazyColumn(

@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.cloudhaus.sensorapp.ui.dashboard.DashboardScreen
 import com.cloudhaus.sensorapp.ui.exercise.ExerciseScreen
+import com.cloudhaus.sensorapp.ui.settings.SettingsScreen
 import com.cloudhaus.sensorapp.ui.unit.UnitDetailScreen
 import com.cloudhaus.sensorapp.viewmodel.SensorViewModel
 
@@ -23,7 +24,11 @@ fun SensorNavGraph(viewModel: SensorViewModel = viewModel()) {
                 onUnitClick = { unitId ->
                     navController.navigate("unit/$unitId")
                 },
+                onSettingsClick = { navController.navigate("settings") },
             )
+        }
+        composable("settings") {
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
         composable(
             "unit/{unitId}",

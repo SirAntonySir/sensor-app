@@ -15,6 +15,7 @@
 		A3C5920B94CD2344A07978ED /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352EF64DC966630702214D0D /* ContentView.swift */; };
 		C06B4846C880DD55DA40571B /* SensorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB56FE3D473271FCE4382F3 /* SensorViewModel.swift */; };
 		D82D0566233B29ADFDF42B2A /* ExerciseUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D6A017CB72780DFF8D0185 /* ExerciseUnit.swift */; };
+		DEAFE7AFF00477822810BF45 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE6B28786BF94D5C284ADB8 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		7DFF11A130C45D11FA2A56D7 /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseView.swift; sourceTree = "<group>"; };
 		BAB56FE3D473271FCE4382F3 /* SensorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorViewModel.swift; sourceTree = "<group>"; };
 		BB871A84E1BFCFBD8B350361 /* UnitDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitDetailView.swift; sourceTree = "<group>"; };
+		BFE6B28786BF94D5C284ADB8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -88,6 +90,7 @@
 			children = (
 				799AE2976881B6ED4EA18C2A /* DashboardView.swift */,
 				7DFF11A130C45D11FA2A56D7 /* ExerciseView.swift */,
+				BFE6B28786BF94D5C284ADB8 /* SettingsView.swift */,
 				BB871A84E1BFCFBD8B350361 /* UnitDetailView.swift */,
 			);
 			path = Views;
@@ -209,6 +212,7 @@
 				A1BEB6AACC8FD2BB0D1A0819 /* ExerciseView.swift in Sources */,
 				3BAAC53515D18D98E7354485 /* SensorApp.swift in Sources */,
 				C06B4846C880DD55DA40571B /* SensorViewModel.swift in Sources */,
+				DEAFE7AFF00477822810BF45 /* SettingsView.swift in Sources */,
 				29CE65164B7E95DDA53DFB0C /* UnitDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

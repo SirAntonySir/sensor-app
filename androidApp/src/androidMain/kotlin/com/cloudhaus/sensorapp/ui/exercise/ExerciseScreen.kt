@@ -16,7 +16,10 @@ import com.cloudhaus.sensorapp.model.ExerciseType
 import com.cloudhaus.sensorapp.model.StepConfig
 import com.cloudhaus.sensorapp.BuildConfig
 import com.cloudhaus.sensorapp.pipeline.BreathDetector
+import com.cloudhaus.sensorapp.sensor.LoggingSensorSource
+import com.cloudhaus.sensorapp.sensor.SensorLogger
 import com.cloudhaus.sensorapp.sensor.SensorSourceProvider
+import com.cloudhaus.sensorapp.settings.AndroidAppSettings
 import com.cloudhaus.sensorapp.ui.animation.ExerciseAnimationRouter
 import com.cloudhaus.sensorapp.viewmodel.SensorViewModel
 import kotlinx.coroutines.delay
@@ -32,13 +35,14 @@ fun ExerciseScreen(
     onFinish: () -> Unit,
 ) {
     val provider = koinInject<SensorSourceProvider>()
-    var forceMock by remember { mutableStateOf(false) }
+    val settings = koinInject<AndroidAppSettings>()
+    val forceMock by settings.forceMockSensor.collectAsState()
 
     // No real barometer and not forced to mock: don't fake an exercise.
     if (!provider.barometerAvailable && !forceMock) {
         BarometerUnavailableContent(
             allowMock = BuildConfig.DEBUG,
-            onUseMock = { forceMock = true },
+            onUseMock = { settings.setForceMockSensor(true) },
             onBack = onFinish,
         )
         return
@@ -58,8 +62,13 @@ private fun ExerciseRunner(
 ) {
     val exerciseType = exerciseTypeFromName(exerciseName)
     val scope = rememberCoroutineScope()
+    val logger = koinInject<SensorLogger>()
 
-    val sensor = remember { provider.create(forceMock).also { it.start() } }
+    val sensor = remember {
+        val label = if (!forceMock && provider.barometerAvailable) "barometer" else "mock"
+        LoggingSensorSource(provider.create(forceMock), logger, label, exerciseName)
+            .also { it.start() }
+    }
     val breathDetector = remember { BreathDetector(sensor) }
 
     val engine = remember {

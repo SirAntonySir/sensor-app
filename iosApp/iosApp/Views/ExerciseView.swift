@@ -11,7 +11,7 @@ struct ExerciseView: View {
     @State private var countdown = 3
     @State private var engine: (any ExerciseEngineWrapper)?
     @State private var intensity: Double = 0
-    @State private var forceMock = false
+    @AppStorage("forceMockSensor") private var forceMock = false
 
     private var barometerAvailable: Bool {
         IosSensorSourceProvider().barometerAvailable
@@ -297,7 +297,13 @@ class SharedExerciseEngine: ExerciseEngineWrapper {
     init(exerciseName: String, forceMock: Bool) {
         let provider = IosSensorSourceProvider()
         usingBarometer = !forceMock && provider.barometerAvailable
-        sensor = provider.create(forceMock: forceMock)
+        let base = provider.create(forceMock: forceMock)
+        sensor = LoggingSensorSource(
+            delegate: base,
+            logger: IosSensorLogger(),
+            source: usingBarometer ? "barometer" : "mock",
+            exercise: exerciseName
+        )
         sensor.start()
         breathDetector = BreathDetector(sensorSource: sensor)
 

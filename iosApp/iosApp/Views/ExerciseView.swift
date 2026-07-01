@@ -145,6 +145,15 @@ struct ExerciseView: View {
     private var activeOverlay: some View {
         VStack(spacing: 12) {
             Spacer()
+            HStack(spacing: 6) {
+                Image(systemName: (engine?.usingBarometer ?? false) ? "barometer" : "testtube.2")
+                Text((engine?.usingBarometer ?? false) ? "Barometer" : "Simulated sensor")
+                    .font(.caption.weight(.semibold))
+            }
+            .foregroundStyle((engine?.usingBarometer ?? false) ? Color.teal : Color.orange)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(.ultraThinMaterial, in: Capsule())
             if exerciseName == "Dandelion" || exerciseName == "Candle" || exerciseName == "Windmill" || exerciseName == "FloatBall" {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Intensity: \(Int(intensity))")
@@ -270,6 +279,7 @@ struct ComposeAnimationView: UIViewControllerRepresentable {
 
 protocol ExerciseEngineWrapper {
     var stateFlow: any AnyObject { get }
+    var usingBarometer: Bool { get }
     func start()
     func stop()
     func onVirtualBlow()
@@ -280,11 +290,14 @@ class SharedExerciseEngine: ExerciseEngineWrapper {
     private let engine: ExerciseEngine
     private let sensor: SensorSource
     private let breathDetector: BreathDetector
+    let usingBarometer: Bool
 
     var stateFlow: any AnyObject { engine.state }
 
     init(exerciseName: String, forceMock: Bool) {
-        sensor = IosSensorSourceProvider().create(forceMock: forceMock)
+        let provider = IosSensorSourceProvider()
+        usingBarometer = !forceMock && provider.barometerAvailable
+        sensor = provider.create(forceMock: forceMock)
         sensor.start()
         breathDetector = BreathDetector(sensorSource: sensor)
 

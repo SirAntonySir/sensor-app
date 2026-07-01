@@ -24,13 +24,20 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait"
         INFOPLIST_KEY_CADisableMinimumFrameDurationOnPhone: YES
-        FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../shared/build/bin/iosSimulatorArm64/debugFramework"
         OTHER_LDFLAGS: "-framework shared"
+        # Framework slice is chosen per SDK: device (iphoneos) vs simulator.
+        "FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]": "$(SRCROOT)/../shared/build/bin/iosSimulatorArm64/debugFramework"
+        "FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]": "$(SRCROOT)/../shared/build/bin/iosArm64/debugFramework"
     preBuildScripts:
       - name: Build KMP Shared Framework
         script: |
           cd "$SRCROOT/.."
-          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+          # Link the framework slice matching the SDK being built.
+          if [[ "$SDK_NAME" == iphonesimulator* ]]; then
+            ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+          else
+            ./gradlew :shared:linkDebugFrameworkIosArm64
+          fi
         basedOnDependencyAnalysis: false
     postBuildScripts:
       - name: Copy Compose Resources
